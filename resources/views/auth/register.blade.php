@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="es">
 
 <head>
     <meta charset="utf-8">
@@ -18,77 +18,81 @@
     </style>
 </head>
 
-<body class="bg-gray-100 font-sans">
+<body class="font-sans bg-gray-100">
 
-    <div class="flex h-screen">
-        <div class="w-1/2 flex justify-center rounded-2xl items-center p-8 mt-3 mb-80 ml-3 bg-white" style=" height: 700px; max-width: 800px; ">
-            <div class="bg-white rounded-xl p-8 max-w-xl w-full ">
-                <img src="{{ asset('storage/imagenes/logo.svg') }}" alt="Logo Ariel" class="w-48 mb-6">
-                <h3 class="text-2xl font-semibold mb-2">Crear cuenta</h3>
-                <p class="text-gray-600 mb-6">Con tu cuenta podrás acceder a Ariel y todas sus funcionalidades.</p>
+    <div class="flex flex-col h-screen p-4 lg:flex-row lg:p-0">
+        <!-- Sección de formulario -->
+        <div class="flex items-center justify-center p-8 bg-white shadow-lg lg:w-1/2 lg:h-full rounded-2xl lg:m-3">
+            <div class="w-full max-w-xl p-8 bg-transparent rounded-xl">
+                <img src="{{ asset('storage/imagenes/logo.svg') }}" alt="Logo Ariel" class="mt-2 w-44">
+                <h3 class="mb-2 text-2xl font-semibold">Crear cuenta</h3>
+                <p class="mb-4 text-gray-600">Con tu cuenta podrás acceder a Ariel y todas sus funcionalidades.</p>
 
                 <form method="POST" action="{{ route('register') }}">
                     @csrf
 
                     <!-- Mostrar mensajes de error globales -->
                     @if ($errors->any())
-                        <div class="mb-4">
-                            <div class="text-red-600 font-medium">
-                                {{ __('Whoops! Something went wrong.') }}
-                            </div>
-                            <ul class="mt-3 list-disc list-inside text-sm text-red-600">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
+                    <div class="mb-4">
+                        <div class="font-medium text-red-600">
+                            {{ __('Whoops! Something went wrong.') }}
                         </div>
+                        <ul class="mt-3 text-sm text-red-600 list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                     @endif
 
                     <div class="relative mb-4">
                         <input type="text" id="name" name="name" placeholder="Nombre"
-                            class="w-full px-4 py-2 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
+                            class="w-full px-4 py-2 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            required />
                         @error('name')
-                            <span class="text-red-600 text-sm">{{ $message }}</span>
+                        <span class="text-sm text-red-600">{{ $message }}</span>
                         @enderror
-
                     </div>
 
                     <div class="relative mb-4">
                         <input type="email" id="email" name="email" placeholder="Email"
-                            class="w-full px-4 py-2 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
+                            class="w-full px-4 py-2 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            required />
                         @error('email')
-                            <span class="text-red-600 text-sm">{{ $message }}</span>
+                        <span class="text-sm text-red-600">{{ $message }}</span>
                         @enderror
-                        <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="64" stroke-dashoffset="64" d="M4 5h16c0.55 0 1 0.45 1 1v12c0 0.55 -0.45 1 -1 1h-16c-0.55 0 -1 -0.45 -1 -1v-12c0 -0.55 0.45 -1 1 -1Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/></path><path stroke-dasharray="24" stroke-dashoffset="24" d="M3 6.5l9 5.5l9 -5.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="24;0"/></path></g></svg>
+                        <div class="absolute inset-y-0 flex items-center pointer-events-none right-3">
+                            <!-- Icono de email -->
                         </div>
                     </div>
 
                     <div class="relative mb-4">
                         <input type="password" id="password" name="password" placeholder="Contraseña"
-                            class="w-full px-4 py-2 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
+                            class="w-full px-4 py-2 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            required />
                         @error('password')
-                            <span class="text-red-600 text-sm">{{ $message }}</span>
+                        <span class="text-sm text-red-600">{{ $message }}</span>
                         @enderror
-                        <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><circle cx="12" cy="12" r="0" fill="currentColor"><animate fill="freeze" attributeName="r" dur="0.2s" values="0;3"/></circle><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12c1.38 -0.77 4.42 -1.3 8 -1.3c3.58 0 6.62 0.53 8 1.3c-1.38 0.77 -4.42 1.3 -8 1.3c-3.58 0 -6.62 -0.53 -8 -1.3Z"><animate fill="freeze" attributeName="d" dur="0.5s" values="M4 12c1.38 -0.77 4.42 -1.3 8 -1.3c3.58 0 6.62 0.53 8 1.3c-1.38 0.77 -4.42 1.3 -8 1.3c-3.58 0 -6.62 -0.53 -8 -1.3Z;M2 12c1.72 -3.83 5.53 -6.5 10 -6.5c4.47 0 8.28 2.67 10 6.5c-1.72 3.83 -5.53 6.5 -10 6.5c-4.47 0 -8.28 -2.67 -10 -6.5Z"/></path></svg>
+                        <div class="absolute inset-y-0 flex items-center pointer-events-none right-3">
+                            <!-- Icono de contraseña -->
                         </div>
                     </div>
 
                     <div class="relative mb-6">
-                        <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirmar contraseña"
-                            class="w-full px-4 py-2 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
+                        <input type="password" id="password_confirmation" name="password_confirmation"
+                            placeholder="Confirmar contraseña"
+                            class="w-full px-4 py-2 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            required />
                         @error('password_confirmation')
-                            <span class="text-red-600 text-sm">{{ $message }}</span>
+                        <span class="text-sm text-red-600">{{ $message }}</span>
                         @enderror
-                        <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><circle cx="12" cy="12" r="0" fill="currentColor"><animate fill="freeze" attributeName="r" dur="0.2s" values="0;3"/></circle><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12c1.38 -0.77 4.42 -1.3 8 -1.3c3.58 0 6.62 0.53 8 1.3c-1.38 0.77 -4.42 1.3 -8 1.3c-3.58 0 -6.62 -0.53 -8 -1.3Z"><animate fill="freeze" attributeName="d" dur="0.5s" values="M4 12c1.38 -0.77 4.42 -1.3 8 -1.3c3.58 0 6.62 0.53 8 1.3c-1.38 0.77 -4.42 1.3 -8 1.3c-3.58 0 -6.62 -0.53 -8 -1.3Z;M2 12c1.72 -3.83 5.53 -6.5 10 -6.5c4.47 0 8.28 2.67 10 6.5c-1.72 3.83 -5.53 6.5 -10 6.5c-4.47 0 -8.28 -2.67 -10 -6.5Z"/></path></svg>
-
+                        <div class="absolute inset-y-0 flex items-center pointer-events-none right-3">
+                            <!-- Icono de confirmación de contraseña -->
                         </div>
                     </div>
 
                     <!-- Reglas de contraseña -->
-                    <ul class="text-sm text-gray-400 mb-4">
+                    <ul class="mb-4 text-sm text-gray-400">
                         <li>8 o más caracteres</li>
                         <li>1 letra mayúscula</li>
                         <li>1 letra minúscula</li>
@@ -105,7 +109,7 @@
                     </div>
 
                     <button type="submit"
-                        class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">Ingresar</button>
+                        class="w-full py-2 text-white transition bg-blue-600 rounded-md hover:bg-blue-700">Ingresar</button>
                 </form>
 
                 <div class="mt-4 text-center">
@@ -115,17 +119,16 @@
                 </div>
             </div>
         </div>
-        <!-- Sección de formulario -->
 
         <!-- Sección de chat -->
-        <div class="w-1/2 flex flex-col justify-center items-center bg-gray-100 p-8">
+        <div class="flex-col items-center justify-center hidden p-8 bg-gray-100 lg:w-1/2 lg:flex">
             <img src="https://www.arielapp.co/assets/forms/value-proposal.svg" alt="Chat preview"
-                class="max-w-full max-h-full object-contain mb-4">
-            <p class="text-center text-gray-600 text-lg font-semibold">Resuelve cualquier consulta legal <br> en
+                class="object-contain max-w-full max-h-full mb-4">
+            <p class="text-lg font-semibold text-center text-gray-600">Resuelve cualquier consulta legal <br> en
                 segundos.</p>
         </div>
-
     </div>
+
 </body>
 
 </html>

@@ -2,6 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\BotController;
+
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -12,13 +17,43 @@ Route::middleware([
     'verified',
 ])->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+        return view('bot');
+    })->name('bot');
 
-    Route::get('/chat', function () {
-        return view('chat');
-    })->name('dashboard');
+
+    Route::get('/chat', [BotController::class, 'showChatForm']);
+    Route::post('/chat', [BotController::class, 'sendMessage']);
+
+
+
+    Route::post('/send-message', function (Request $request) {
+        $message = $request->input('message');
+
+        $chatUrl = env('BOTPRESS_WEBHOOK');
+
+        $response = Http::withOptions(['verify' => false])->post($chatUrl, [
+            'type' => 'text',
+            'text' => $message,
+        ]);
+
+        \Log::info($response->body());
+
+        $botResponse = $response->json();
+
+        return response()->json(['reply' => $botResponse['responses'][0]['text'] ?? 'Sin respuesta del bot']);
+    });
+  
 });
+
+
+
+
+
+
+
+
+
+
 
 
 
