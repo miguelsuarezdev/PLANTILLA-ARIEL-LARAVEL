@@ -309,10 +309,6 @@
             <div class="flex-grow w-full max-w-4xl pt-20 overflow-y-auto pb-36" id="conversationContainer"
                 data-simplebar>
                 <div class="w-full conversation" id="conversation"></div>
-
-                <!-- Contenedor para el audio -->
-                <audio id="botAudio" controls style="display: none;"></audio>
-
             </div>
         </div>
 
@@ -338,138 +334,142 @@
 
         <script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
         <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                const textarea = document.getElementById('userMessage');
-                const conversationContainer = document.querySelector('[data-simplebar]');
-                const conversation = document.getElementById('conversation');
-                const chatContent = document.getElementById('chatContent'); // Contenido que queremos ocultar
-                let botResponseElement; // Elemento donde se mostrará la respuesta del bot
-                let fullResponse = ''; // Respuesta completa del bot
-                let currentIndex = 0; // Índice actual de la simulación de escritura
+          document.addEventListener("DOMContentLoaded", function() {
+    const textarea = document.getElementById('userMessage');
+    const conversationContainer = document.querySelector('[data-simplebar]');
+    const conversation = document.getElementById('conversation');
+    const chatContent = document.getElementById('chatContent'); // Contenido que queremos ocultar
+    let botResponseElement; // Elemento donde se mostrará la respuesta del bot
+    let fullResponse = ''; // Respuesta completa del bot
+    let currentIndex = 0; // Índice actual de la simulación de escritura
 
-                // Inicializar SimpleBar para el scroll
-                const simpleBarInstance = new SimpleBar(conversationContainer);
+    // Inicializar SimpleBar para el scroll
+    const simpleBarInstance = new SimpleBar(conversationContainer);
 
-                textarea.addEventListener('input', function() {
-                    this.style.height = 'auto';
-                    const newHeight = Math.min(this.scrollHeight, 128);
-                    this.style.height = newHeight + 'px';
-                });
+    textarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        const newHeight = Math.min(this.scrollHeight, 128);
+        this.style.height = newHeight + 'px';
+    });
 
-                function scrollToBottom() {
-                    const scrollElement = simpleBarInstance.getScrollElement();
-                    scrollElement.scrollTop = scrollElement.scrollHeight;
-                }
+    function scrollToBottom() {
+        const scrollElement = simpleBarInstance.getScrollElement();
+        scrollElement.scrollTop = scrollElement.scrollHeight;
+    }
 
-                function formatBotResponse(response) {
-                    const lines = response.split('\n');
-                    let formattedResponse = '';
+    function formatBotResponse(response) {
+        const lines = response.split('\n');
+        let formattedResponse = '';
 
-                    lines.forEach(line => {
-                        if (line.match(/^\d+\./)) {
-                            // Detecta las listas numeradas
-                            formattedResponse += `<li>${line.substring(line.indexOf(' ') + 1).trim()}</li>`;
-                        } else if (line.startsWith('Preguntas de seguimiento:')) {
-                            formattedResponse += `<h4 class="mt-4 font-bold">${line.trim()}</h4>`;
-                        } else {
-                            formattedResponse += `<p>${line.trim()}</p>`;
-                        }
-                    });
+        lines.forEach(line => {
+            if (line.match(/^\d+\./)) {
+                // Detecta las listas numeradas
+                formattedResponse += `<li>${line.substring(line.indexOf(' ') + 1).trim()}</li>`;
+            } else if (line.startsWith('Preguntas de seguimiento:')) {
+                formattedResponse += `<h4 class="mt-4 font-bold">${line.trim()}</h4>`;
+            } else {
+                formattedResponse += `<p>${line.trim()}</p>`;
+            }
+        });
 
-                    if (formattedResponse.includes('<li>')) {
-                        formattedResponse = `<ol class="ml-6 list-decimal">${formattedResponse}</ol>`;
-                    }
+        if (formattedResponse.includes('<li>')) {
+            formattedResponse = `<ol class="ml-6 list-decimal">${formattedResponse}</ol>`;
+        }
 
-                    return formattedResponse; // Se retorna solo el contenido formateado
-                }
+        return formattedResponse; // Se retorna solo el contenido formateado
+    }
 
-                // Función para simular escritura del bot
-                function simulateTyping() {
-                    if (currentIndex < fullResponse.length) {
-                        let nextChar = fullResponse.charAt(currentIndex);
+    // Función para simular escritura del bot
+    function simulateTyping() {
+        if (currentIndex < fullResponse.length) {
+            let nextChar = fullResponse.charAt(currentIndex);
 
-                        if (nextChar === '<') {
-                            const tagEnd = fullResponse.indexOf('>', currentIndex) + 1;
-                            nextChar = fullResponse.substring(currentIndex, tagEnd);
-                            currentIndex = tagEnd;
-                        } else {
-                            currentIndex++;
-                        }
+            if (nextChar === '<') {
+                const tagEnd = fullResponse.indexOf('>', currentIndex) + 1;
+                nextChar = fullResponse.substring(currentIndex, tagEnd);
+                currentIndex = tagEnd;
+            } else {
+                currentIndex++;
+            }
 
-                        botResponseElement.innerHTML += nextChar;
-                        scrollToBottom();
+            botResponseElement.innerHTML += nextChar;
+            scrollToBottom();
 
-                        setTimeout(simulateTyping, 50); // Velocidad de escritura
-                    }
-                }
+            setTimeout(simulateTyping, 50); // Velocidad de escritura
+        }
+    }
 
-                function sendMessage() {
-                    const userMessage = document.getElementById('userMessage').value;
+    function sendMessage() {
+        const userMessage = document.getElementById('userMessage').value;
 
-                    // Ocultar el contenido del chat al enviar un mensaje
-                    chatContent.style.display = 'none';
-                    conversationContainer.style.display = 'flex';
+        // Ocultar el contenido del chat al enviar un mensaje
+        chatContent.style.display = 'none';
+        conversationContainer.style.display = 'flex';
 
-                    // Mostrar el mensaje del usuario en la conversación
-                    conversation.innerHTML +=
-                        '<div class="flex justify-end mb-2"><div class="max-w-xs p-2 text-white bg-blue-500 rounded-lg"><strong>Usuario:</strong> ' +
-                        userMessage + '</div></div>';
+        // Mostrar el mensaje del usuario en la conversación
+        conversation.innerHTML +=
+            '<div class="flex justify-end mb-2"><div class="max-w-xs p-2 text-white bg-blue-500 rounded-lg"><strong>Usuario:</strong> ' +
+            userMessage + '</div></div>';
 
-                    // Mostrar "Escribiendo..." mientras el bot está respondiendo
-                    const typingMessage = document.createElement('div');
-                    typingMessage.className = 'flex justify-start mb-2 typing';
-                    typingMessage.innerHTML =
-                        '<div class="flex inline-flex items-start p-2 text-black bg-gray-300 rounded-lg"><img src="https://app.proderi.com/img/Logo%20Alena%20-%201.svg" alt="Bot Icon" class="w-8 h-8 mr-2"><div id="typingIndicator">Escribiendo...</div></div>';
-                    conversation.appendChild(typingMessage);
+        // Mostrar "Escribiendo..." mientras el bot está respondiendo
+        const typingMessage = document.createElement('div');
+        typingMessage.className = 'flex justify-start mb-2 typing';
+        typingMessage.innerHTML =
+            '<div class="flex inline-flex items-start p-2 text-black bg-gray-300 rounded-lg"><img src="https://app.proderi.com/img/Logo%20Alena%20-%201.svg" alt="Bot Icon" class="w-8 h-8 mr-2"><div id="typingIndicator">Escribiendo...</div></div>';
+        conversation.appendChild(typingMessage);
 
-                    scrollToBottom(); // Asegúrate de hacer scroll justo después de agregar la respuesta del usuario
+        scrollToBottom(); // Asegúrate de hacer scroll justo después de agregar la respuesta del usuario
 
-                    document.getElementById('userMessage').value = ''; // Limpiar el input de texto
+        document.getElementById('userMessage').value = ''; // Limpiar el input de texto
 
-                    fetch('/chat', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                message: userMessage
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            // Mostrar la respuesta del bot en el chat
-                            conversation.removeChild(typingMessage);
-                            const botResponseContainer = document.createElement('div');
-                            botResponseContainer.className = 'flex justify-start mb-2';
-                            botResponseContainer.innerHTML =
-                                '<div class="flex inline-flex items-start p-2 text-black bg-gray-300 rounded-lg"><img src="https://app.proderi.com/img/Logo%20Alena%20-%201.svg" alt="Bot Icon" class="w-8 h-8 mr-2"><div class="bot-response">' +
-                                data.response + '</div></div>';
-                            conversation.appendChild(botResponseContainer);
+        fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    message: userMessage
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                conversation.removeChild(typingMessage);
 
-                            // Si hay un audio disponible, mostrar el reproductor
-                            if (data.audioUrl) {
-                                const botAudio = document.getElementById('botAudio');
-                                botAudio.src = data.audioUrl;
-                                botAudio.style.display = 'block';
-                                botAudio.play();
-                            }
+                // Crear el contenedor de la respuesta del bot
+                const botResponseContainer = document.createElement('div');
+                botResponseContainer.className = 'flex justify-start mb-2'; // Asegurarse que tiene la clase adecuada
+                botResponseContainer.innerHTML =
+                    '<div class="flex inline-flex items-start p-2 text-black bg-gray-300 rounded-lg"><img src="https://app.proderi.com/img/Logo%20Alena%20-%201.svg" alt="Bot Icon" class="w-8 h-8 mr-2"><div class="bot-response"></div></div>';
+                conversation.appendChild(botResponseContainer);
 
-                            scrollToBottom();
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                        });
-                }
+                // Inicializar el contenedor donde se va a escribir la respuesta
+                botResponseElement = botResponseContainer.querySelector('.bot-response');
 
-                // Manejar el envío de mensajes al presionar Enter
-                document.getElementById('userMessage').addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        sendMessage();
-                    }
-                });
+                // Formatear la respuesta del bot
+                fullResponse = formatBotResponse(data.response);
+
+                // Iniciar simulación de escritura
+                currentIndex = 0;
+                simulateTyping(); // Llamar a la función para simular la escritura del bot
+
+                scrollToBottom(); // Hacer scroll al final
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                conversation.removeChild(typingMessage);
             });
+    }
+
+    // Manejar el envío de mensajes al presionar Enter
+    document.getElementById('userMessage').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+});
+
         </script>
 
         <!-- JavaScript para cambiar el contenido dinámico -->

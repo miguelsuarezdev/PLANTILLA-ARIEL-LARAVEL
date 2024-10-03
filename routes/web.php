@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\BotController;
+use App\Http\Controllers\TextToSpeechController;
 
 
 Route::get('/', function () {
@@ -42,7 +43,15 @@ Route::middleware([
 
         return response()->json(['reply' => $botResponse['responses'][0]['text'] ?? 'Sin respuesta del bot']);
     });
-  
+
+
+
+    Route::get('/convert-text', function () {
+        return view('convert_text');
+    });
+
+    Route::post('/convert-text-to-audio', [TextToSpeechController::class, 'convertTextToAudio'])
+        ->name('convert.text.to.audio');
 });
 
 
