@@ -1,47 +1,64 @@
-    const chat = require('@botpress/chat');
-    const express = require('express');
-    const app = express();
-    const port = 3000; // Usa un puerto que esté disponible
+const chat = require('@botpress/chat');
+const express = require('express');
+const app = express();
+const port = 3000; // Usa un puerto que esté disponible
 
-    app.use(express.json());
+app.use(express.json());
 
-    app.post('/send', async (req, res) => {
-    const messageText = req.body.message;
+app.post('/send', async (req, res) => {
+  const messageText = req.body.message;
 
-    const webhookId = '410da114-919d-4cf2-ae69-2f60b75ad168';
+  const webhookId = '410da114-919d-4cf2-ae69-2f60b75ad168';
+  const apiUrl = `https://chat.botpress.cloud/${webhookId}`;
 
+  try {
+    const client = await chat.Client.connect({ apiUrl });
+    const { conversation } = await client.createConversation({});
+    await client.createMessage({
+      conversationId: conversation.id,
+      payload: {
+        type: 'text',
+        text: messageText,
+      },
+    });
 
-    const apiUrl = `https://chat.botpress.cloud/${webhookId}`;
+    // Función para intentar obtener la respuesta del bot con reintentos
+    const MAX_RETRIES = 5; // Número máximo de reintentos
+    const DELAY_BETWEEN_RETRIES = 1000; // Tiempo entre reintentos en milisegundos
+
+    async function waitForBotResponse(client, conversationId, retries = 0) {
+      if (retries >= MAX_RETRIES) {
+        throw new Error("No response from bot after multiple retries.");
+      }
+
+      const { messages } = await client.listConversationMessages({
+        id: conversationId,
+      });
+
+      const botResponse = messages.find(message => message.userId !== client.user.id);
+
+      if (botResponse) {
+        return botResponse.payload;
+      }
+
+      // Si no hay respuesta, esperar un poco antes de reintentar
+      await new Promise(resolve => setTimeout(resolve, DELAY_BETWEEN_RETRIES));
+      return waitForBotResponse(client, conversationId, retries + 1);
+    }
 
     try {
-        const client = await chat.Client.connect({ apiUrl });
-        const { conversation } = await client.createConversation({});
-        await client.createMessage({
-        conversationId: conversation.id,
-        payload: {
-            type: 'text',
-            text: messageText,
-        },
-        });
-
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-
-        const { messages } = await client.listConversationMessages({
-        id: conversation.id,
-        });
-
-        const botResponse = messages.find(message => message.userId !== client.user.id);
-
-        if (botResponse) {
-        res.json({ response: botResponse.payload });
-        } else {
-        res.json({ response: "No response from bot." });
-        }
+      // Intentar obtener la respuesta del bot usando la lógica de reintento
+      const botResponse = await waitForBotResponse(client, conversation.id);
+      res.json({ response: botResponse });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+      res.json({ response: "No response from bot." });
     }
-    });
 
-    app.listen(port, () => {
-    console.log(`Node.js server listening at http://localhost:${port}`);
-    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Node.js server listening at http://localhost:${port}`);
+});

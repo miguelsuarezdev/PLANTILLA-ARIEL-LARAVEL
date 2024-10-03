@@ -23,14 +23,14 @@
         .closed {
             transform: translateX(-100%);
         }
-
     </style>
 </head>
 
 <body class="body bg-white dark:bg-[#0F172A]">
 
-    <aside class="fixed z-50 hidden h-screen transition duration-1000 ease-in-out transform -translate-x-48 w-60 bg-slate-100 md:flex">
-     <!-- open sidebar button -->
+    <aside
+        class="fixed z-50 hidden h-screen transition duration-1000 ease-in-out transform -translate-x-48 w-60 bg-slate-100 md:flex">
+        <!-- open sidebar button -->
         <div
             class="max-toolbar translate-x-24 scale-x-0 w-full transition transform ease-in duration-300 flex items-center justify-between dark:border-[#0F172A] bg-slate-100 absolute top-2 h-12">
             <div class="flex items-center pl-4 space-x-2">
@@ -70,39 +70,39 @@
                 </svg>
                 <div>Consultas</div>
             </div>
-        {{-- Transcripciones --}}
-        <div
-            class="hover:ml-4 w-full text-white hover:text-purple-500 dark:hover:text-blue-500 bg-[#1E293B] p-2 pl-8 transform ease-in-out duration-300 flex flex-row items-center space-x-3">
-            <svg aria-hidden="true" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none"
-                viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
-            </svg>
-            <div>Transcripciones</div>
-        </div>
-        <!-- Prueba gratis -->
-        {{-- <div class="absolute left-0 w-full px-6 bottom-24">
+            {{-- Transcripciones --}}
+            <div
+                class="hover:ml-4 w-full text-white hover:text-purple-500 dark:hover:text-blue-500 bg-[#1E293B] p-2 pl-8 transform ease-in-out duration-300 flex flex-row items-center space-x-3">
+                <svg aria-hidden="true" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+                </svg>
+                <div>Transcripciones</div>
+            </div>
+            <!-- Prueba gratis -->
+            {{-- <div class="absolute left-0 w-full px-6 bottom-24">
             <div class="p-4 bg-white rounded-lg shadow">
                 <p class="text-sm text-gray-500">El tiempo de acceso gratis terminará dentro de 3 días.</p>
                 <button class="w-full px-4 py-2 mt-4 text-white bg-blue-500 rounded-md">Ver planes</button>
 
             </div>
         </div> --}}
-        <!-- Perfil de usuario -->
-        <div class="absolute w-full px-6 bottom-4">
-            <div class="flex items-center">
-                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Usuario"
-                    class="w-10 h-10 mr-3 rounded-full">
-                <div>
-                    <p class="font-medium text-gray-700">{{ Auth::user()->name }}</p>
-                    <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
+            <!-- Perfil de usuario -->
+            <div class="absolute w-full px-6 bottom-4">
+                <div class="flex items-center">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Usuario"
+                        class="w-10 h-10 mr-3 rounded-full">
+                    <div>
+                        <p class="font-medium text-gray-700">{{ Auth::user()->name }}</p>
+                        <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
+                    </div>
                 </div>
-            </div>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button class="w-full px-4 py-2 mt-4 text-white bg-blue-500 rounded-md">Cerrar Sesion</button>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button class="w-full px-4 py-2 mt-4 text-white bg-blue-500 rounded-md">Cerrar Sesion</button>
 
-            </form>
-        </div>
+                </form>
+            </div>
         </div>
         <!-- MINI SIDEBAR-->
         <div class="mini mt-20 flex flex-col space-y-2 w-full h-[calc(100vh)]">
@@ -156,14 +156,16 @@
                     class="fixed top-0 bottom-0 left-0 flex flex-col w-5/6 max-w-sm px-6 py-6 overflow-y-auto bg-white border-r">
                     <div class="flex items-center mb-8">
                         <a class="mr-auto text-3xl font-bold leading-none" href="#">
-                            <a href="javascript:void(0)"><img src="{{ asset('storage/imagenes/logo.svg') }}" alt="logo"
-                                class='w-40 ml-7 max-lg:mr-5' />
-                        </a>
+                            <a href="javascript:void(0)"><img src="{{ asset('storage/imagenes/logo.svg') }}"
+                                    alt="logo" class='w-40 ml-7 max-lg:mr-5' />
+                            </a>
                         </a>
                         <button class="navbar-close">
                             <svg class="w-6 h-6 text-gray-400 cursor-pointer hover:text-gray-500"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12">
                                 </path>
                             </svg>
                         </button>
@@ -205,7 +207,9 @@
 
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button class="w-full px-4 py-2 mt-4 font-semibold leading-loose text-center text-white bg-blue-600 rounded-xl">Cerrar Sesion</button>
+                                <button
+                                    class="w-full px-4 py-2 mt-4 font-semibold leading-loose text-center text-white bg-blue-600 rounded-xl">Cerrar
+                                    Sesion</button>
 
                             </form>
 
@@ -278,17 +282,14 @@
 
 
     <!-- CONTENT -->
-    <div class="flex flex-col items-center justify-start min-h-screen overflow-hidden bg-white shadow-2xl content logo">
+    <div
+        class="flex flex-col items-center justify-start min-h-screen overflow-hidden bg-white shadow-2xl content logo">
         <!-- Contenedor principal que ocupa todo el espacio -->
         <div class="flex flex-col items-center flex-grow w-full h-full overflow-y-auto" id="mainContainer">
-            <!-- Contenedor de conversación con SimpleBar -->
-
-
-            <!-- Contenido del chat dinámico -->
-
             <div class="w-full max-w-4xl mt-24 text-center" id="chatContent">
                 <div id="legal" class="tabContent">
-                    <img src="https://app.proderi.com/img/Logo%20Alena%20-%201.svg" alt="Imagen Ariel" class="w-40 mx-auto mb-4">
+                    <img src="https://app.proderi.com/img/Logo%20Alena%20-%201.svg" alt="Imagen Ariel"
+                        class="w-40 mx-auto mb-4">
                     <h1 class="text-2xl font-bold text-gray-800">Alena - Asistente Legal</h1>
                     <p class="mt-2 text-base text-gray-600">Analiza miles de normas, jurisprudencia y doctrina legal
                         especializada. No te limites a hacer preguntas, formula casos y pide que analice situaciones de
@@ -305,23 +306,31 @@
                 </div>
             </div>
 
-            <div class="flex-grow w-full max-w-4xl pt-20 overflow-y-auto pb-36" id="conversationContainer" data-simplebar>
+            <div class="flex-grow w-full max-w-4xl pt-20 overflow-y-auto pb-36" id="conversationContainer"
+                data-simplebar>
                 <div class="w-full conversation" id="conversation"></div>
             </div>
         </div>
 
         <!-- Caja de entrada de mensajes estilizada -->
-        <div class="fixed bottom-0 w-full max-w-full px-2 mx-auto mb-4 sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-4xl" id="chatBox">
-            <div class="flex items-end w-full bg-gray-800 shadow-lg rounded-2xl focus-within:ring-2 focus-within:ring-blue-500">
-                <textarea placeholder="Type your message here..." class="flex-grow h-16 px-4 py-5 text-white bg-gray-800 border-none resize-none focus:outline-none rounded-l-2xl max-h-32" id="userMessage" required></textarea>
-                <button class="flex items-center justify-center p-3 mb-2 mr-1 text-white bg-gray-700 rounded-md hover:bg-gray-600" onclick="sendMessage()">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        <div class="fixed bottom-0 w-full max-w-full px-2 mx-auto mb-4 sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-4xl"
+            id="chatBox">
+            <div
+                class="flex items-end w-full bg-gray-800 shadow-lg rounded-2xl focus-within:ring-2 focus-within:ring-blue-500">
+                <textarea placeholder="Type your message here..."
+                    class="flex-grow h-16 px-4 py-5 text-white bg-gray-800 border-none resize-none focus:outline-none rounded-l-2xl max-h-32"
+                    id="userMessage" required></textarea>
+                <button
+                    class="flex items-center justify-center p-3 mb-2 mr-1 text-white bg-gray-700 rounded-md hover:bg-gray-600"
+                    onclick="sendMessage()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
                 </button>
             </div>
         </div>
-
 
         <script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
         <script>
@@ -329,8 +338,12 @@
                 const textarea = document.getElementById('userMessage');
                 const conversationContainer = document.querySelector('[data-simplebar]');
                 const conversation = document.getElementById('conversation');
+                const chatContent = document.getElementById('chatContent'); // Contenido que queremos ocultar
+                let botResponseElement; // Elemento donde se mostrará la respuesta del bot
+                let fullResponse = ''; // Respuesta completa del bot
+                let currentIndex = 0; // Índice actual de la simulación de escritura
 
-                // Inicializar SimpleBar
+                // Inicializar SimpleBar para el scroll
                 const simpleBarInstance = new SimpleBar(conversationContainer);
 
                 textarea.addEventListener('input', function() {
@@ -363,26 +376,42 @@
                         formattedResponse = `<ol class="ml-6 list-decimal">${formattedResponse}</ol>`;
                     }
 
-                    return `
-                        <div class="flex justify-start mb-2">
-                            <div class="flex inline-flex items-start p-2 text-black bg-gray-300 rounded-lg">
-                                <img src="https://app.proderi.com/img/Logo%20Alena%20-%201.svg" alt="Bot Icon" class="w-8 h-8 mr-2">
-                                <div>${formattedResponse}</div>
-                            </div>
-                        </div>
-                    `;
+                    return formattedResponse; // Se retorna solo el contenido formateado
+                }
+
+                // Función para simular escritura del bot
+                function simulateTyping() {
+                    if (currentIndex < fullResponse.length) {
+                        let nextChar = fullResponse.charAt(currentIndex);
+
+                        if (nextChar === '<') {
+                            const tagEnd = fullResponse.indexOf('>', currentIndex) + 1;
+                            nextChar = fullResponse.substring(currentIndex, tagEnd);
+                            currentIndex = tagEnd;
+                        } else {
+                            currentIndex++;
+                        }
+
+                        botResponseElement.innerHTML += nextChar;
+                        scrollToBottom();
+
+                        setTimeout(simulateTyping, 50); // Velocidad de escritura
+                    }
                 }
 
                 function sendMessage() {
                     const userMessage = document.getElementById('userMessage').value;
-                    const chatContent = document.getElementById('chatContent');
+
+                    // Ocultar el contenido del chat al enviar un mensaje
                     chatContent.style.display = 'none';
                     conversationContainer.style.display = 'flex';
 
+                    // Mostrar el mensaje del usuario en la conversación
                     conversation.innerHTML +=
                         '<div class="flex justify-end mb-2"><div class="max-w-xs p-2 text-white bg-blue-500 rounded-lg"><strong>Usuario:</strong> ' +
                         userMessage + '</div></div>';
 
+                    // Mostrar "Escribiendo..." mientras el bot está respondiendo
                     const typingMessage = document.createElement('div');
                     typingMessage.className = 'flex justify-start mb-2 typing';
                     typingMessage.innerHTML =
@@ -391,14 +420,15 @@
 
                     scrollToBottom(); // Asegúrate de hacer scroll justo después de agregar la respuesta del usuario
 
-                    document.getElementById('userMessage').value = '';
+                    document.getElementById('userMessage').value = ''; // Limpiar el input de texto
+
                     fetch('/chat', {
-                            method: 'POST'
-                            , headers: {
-                                'Content-Type': 'application/json'
-                                , 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            }
-                            , body: JSON.stringify({
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
                                 message: userMessage
                             })
                         })
@@ -406,12 +436,25 @@
                         .then(data => {
                             conversation.removeChild(typingMessage);
 
-                            // Formatear y mostrar la respuesta del bot
-                            const formattedResponse = formatBotResponse(data.response);
-                            conversation.innerHTML += formattedResponse;
+                            // Crear el contenedor de la respuesta del bot
+                            const botResponseContainer = document.createElement('div');
+                            botResponseContainer.className =
+                            'flex justify-start mb-2'; // Asegurarse que tiene la clase adecuada
+                            botResponseContainer.innerHTML =
+                                '<div class="flex inline-flex items-start p-2 text-black bg-gray-300 rounded-lg"><img src="https://app.proderi.com/img/Logo%20Alena%20-%201.svg" alt="Bot Icon" class="w-8 h-8 mr-2"><div class="bot-response"></div></div>';
+                            conversation.appendChild(botResponseContainer);
 
+                            // Inicializar el contenedor donde se va a escribir la respuesta
+                            botResponseElement = botResponseContainer.querySelector('.bot-response');
 
-                            scrollToBottom(); // Hacer scroll después de que la respuesta del bot se haya añadido
+                            // Formatear la respuesta del bot
+                            fullResponse = formatBotResponse(data.response);
+
+                            // Iniciar simulación de escritura
+                            currentIndex = 0;
+                            simulateTyping(); // Llamar a la función para simular la escritura del bot
+
+                            scrollToBottom(); // Hacer scroll al final
                         })
                         .catch(error => {
                             console.error('Error:', error);
@@ -419,6 +462,7 @@
                         });
                 }
 
+                // Manejar el envío de mensajes al presionar Enter
                 document.getElementById('userMessage').addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
@@ -426,63 +470,10 @@
                     }
                 });
             });
-
         </script>
 
         <!-- JavaScript para cambiar el contenido dinámico -->
-        <script>
-            const sidebar = document.querySelector("aside");
-            const maxSidebar = document.querySelector(".max")
-            const miniSidebar = document.querySelector(".mini")
-            const maxToolbar = document.querySelector(".max-toolbar")
-            const logo = document.querySelector('.logo')
-            const content = document.querySelector('.content')
-            const moon = document.querySelector(".moon")
-            const sun = document.querySelector(".sun")
-
-            function setDark(val) {
-                if (val === "dark") {
-                    document.documentElement.classList.add('dark')
-                    moon.classList.add("hidden")
-                    sun.classList.remove("hidden")
-                } else {
-                    document.documentElement.classList.remove('dark')
-                    sun.classList.add("hidden")
-                    moon.classList.remove("hidden")
-                }
-            }
-
-            function openNav() {
-                if (sidebar.classList.contains('-translate-x-48')) {
-                    // max sidebar
-                    sidebar.classList.remove("-translate-x-48")
-                    sidebar.classList.add("translate-x-none")
-                    maxSidebar.classList.remove("hidden")
-                    maxSidebar.classList.add("flex")
-                    miniSidebar.classList.remove("flex")
-                    miniSidebar.classList.add("hidden")
-                    maxToolbar.classList.add("translate-x-0")
-                    maxToolbar.classList.remove("translate-x-24", "scale-x-0")
-                    logo.classList.remove("ml-12")
-                    content.classList.remove("ml-12")
-                    content.classList.add("ml-12", "md:ml-60")
-                } else {
-                    // mini sidebar
-                    sidebar.classList.add("-translate-x-48")
-                    sidebar.classList.remove("translate-x-none")
-                    maxSidebar.classList.add("hidden")
-                    maxSidebar.classList.remove("flex")
-                    miniSidebar.classList.add("flex")
-                    miniSidebar.classList.remove("hidden")
-                    maxToolbar.classList.add("translate-x-24", "scale-x-0")
-                    maxToolbar.classList.remove("translate-x-0")
-                    logo.classList.add('ml-12')
-                    content.classList.remove("ml-12", "md:ml-60")
-                    content.classList.add("ml-12")
-                }
-            }
-
-        </script>
+    </div>
 
 </body>
 
