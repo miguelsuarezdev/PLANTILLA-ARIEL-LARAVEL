@@ -8,7 +8,9 @@ app.use(express.json());
 app.post('/send', async (req, res) => {
   const messageText = req.body.message;
 
-  const webhookId = '410da114-919d-4cf2-ae69-2f60b75ad168';
+  const webhookId = 'ca97e80a-1910-45fb-8819-ac44fb79fb3b';
+
+  
   const apiUrl = `https://chat.botpress.cloud/${webhookId}`;
 
   try {

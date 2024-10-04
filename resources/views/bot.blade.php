@@ -283,7 +283,7 @@
 
     <!-- CONTENT -->
     <div
-        class="flex flex-col items-center justify-start min-h-screen overflow-hidden bg-white shadow-2xl content logo">
+        class="flex flex-col content items-center justify-start min-h-screen overflow-hidden bg-white shadow-2xl content logo">
         <!-- Contenedor principal que ocupa todo el espacio -->
         <div class="flex flex-col items-center flex-grow w-full h-full overflow-y-auto" id="mainContainer">
             <div class="w-full max-w-4xl mt-24 text-center" id="chatContent">
@@ -337,12 +337,16 @@
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
+
+
+
         <script>
             document.addEventListener("DOMContentLoaded", function() {
                 const textarea = document.getElementById('userMessage');
                 const conversationContainer = document.querySelector('[data-simplebar]');
                 const conversation = document.getElementById('conversation');
                 const chatContent = document.getElementById('chatContent'); // Contenido que queremos ocultar
+                const botAudio = document.getElementById('botAudio'); // Referencia al audio
                 let botResponseElement; // Elemento donde se mostrará la respuesta del bot
                 let fullResponse = ''; // Respuesta completa del bot
                 let currentIndex = 0; // Índice actual de la simulación de escritura
@@ -404,11 +408,14 @@
                 }
 
                 function sendMessage() {
-                    const userMessage = document.getElementById('userMessage').value;
+                    const userMessage = textarea.value;
 
                     // Ocultar el contenido del chat al enviar un mensaje
                     chatContent.style.display = 'none';
                     conversationContainer.style.display = 'flex';
+
+                    // Ocultar el reproductor de audio al enviar un nuevo mensaje
+                    botAudio.style.display = 'none';
 
                     // Mostrar el mensaje del usuario en la conversación
                     conversation.innerHTML +=
@@ -422,55 +429,76 @@
                         '<div class="flex inline-flex items-start p-2 text-black bg-gray-300 rounded-lg"><img src="https://app.proderi.com/img/Logo%20Alena%20-%201.svg" alt="Bot Icon" class="w-8 h-8 mr-2"><div id="typingIndicator">Escribiendo...</div></div>';
                     conversation.appendChild(typingMessage);
 
-                    scrollToBottom(); // Asegúrate de hacer scroll justo después de agregar la respuesta del usuario
+                    scrollToBottom();
 
                     document.getElementById('userMessage').value = ''; // Limpiar el input de texto
 
                     fetch('/chat', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                message: userMessage
-                            })
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            message: userMessage
                         })
-                        .then(response => response.json())
-                        .then(data => {
-                            // Mostrar la respuesta del bot en el chat
-                            conversation.removeChild(typingMessage);
-                            const botResponseContainer = document.createElement('div');
-                            botResponseContainer.className = 'flex justify-start mb-2';
-                            botResponseContainer.innerHTML =
-                                '<div class="flex inline-flex items-start p-2 text-black bg-gray-300 rounded-lg"><img src="https://app.proderi.com/img/Logo%20Alena%20-%201.svg" alt="Bot Icon" class="w-8 h-8 mr-2"><div class="bot-response">' +
-                                data.response + '</div></div>';
-                            conversation.appendChild(botResponseContainer);
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        conversation.removeChild(typingMessage);
 
-                            // Si hay un audio disponible, mostrar el reproductor
-                            if (data.audioUrl) {
-                                const botAudio = document.getElementById('botAudio');
-                                botAudio.src = data.audioUrl;
-                                botAudio.style.display = 'block';
-                                botAudio.play();
+                        // Crear el contenedor de la respuesta del bot
+                        const botResponseContainer = document.createElement('div');
+                        botResponseContainer.className = 'flex justify-start mb-2';
+                        botResponseContainer.innerHTML =
+                            '<div class="flex inline-flex items-start p-2 text-black bg-gray-300 rounded-lg"><img src="https://app.proderi.com/img/Logo%20Alena%20-%201.svg" alt="Bot Icon" class="w-8 h-8 mr-2"><div class="bot-response"></div></div>';
+                        conversation.appendChild(botResponseContainer);
+
+                        // Inicializar el contenedor donde se va a escribir la respuesta
+                        botResponseElement = botResponseContainer.querySelector('.bot-response');
+
+                        // Formatear la respuesta del bot
+                        fullResponse = formatBotResponse(data.response);
+
+                        // Iniciar simulación de escritura
+                        currentIndex = 0;
+                        simulateTyping(); // Llamar a la función para simular la escritura del bot
+
+                        // Si hay un audio disponible, mostrar el reproductor
+                        if (data.audioUrl) {
+                            botAudio.src = data.audioUrl;
+                            botAudio.style.display = 'block'; // Mostrar el reproductor de audio
+
+                            // Ajustar la velocidad de reproducción según la longitud del texto
+                            const textLength = data.response.length;
+                            if (textLength > 500) {
+                                botAudio.playbackRate = 0.85;  // Reducir la velocidad para textos largos
+                            } else {
+                                botAudio.playbackRate = 1.0;  // Velocidad normal para textos cortos
                             }
 
-                            scrollToBottom();
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                        });
+                            botAudio.play();
+                        }
+
+                        scrollToBottom(); // Asegúrate de hacer scroll al final
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        conversation.removeChild(typingMessage);
+                    });
                 }
 
                 // Manejar el envío de mensajes al presionar Enter
-                document.getElementById('userMessage').addEventListener('keypress', function(e) {
+                textarea.addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
                         sendMessage();
                     }
                 });
             });
-        </script>
+            </script>
+
+
 
         <!-- JavaScript para cambiar el contenido dinámico -->
     </div>

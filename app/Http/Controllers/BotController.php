@@ -14,20 +14,20 @@ class BotController extends Controller
 
     public function sendMessage(Request $request)
     {
-        // Obtener el mensaje del usuario
+
         $userMessage = $request->input('message');
 
-        // Enviar el mensaje al bot y obtener la respuesta
+
         $response = Http::post('http://localhost:3000/send', [
             'message' => $userMessage,
         ]);
 
         $responseData = $response->json();
 
-        // Extrae el texto de la respuesta del bot
+
         $botMessageText = $responseData['response']['text'] ?? 'Error in response';
 
-        // Formatear la respuesta del bot para mostrarla en el chat
+
         $titles = ['Presenciales', 'Virtuales', 'Entrenamiento Especializado', 'Organismos Internacionales', 'Educativos'];
         $formattedResponse = '';
 
@@ -40,9 +40,9 @@ class BotController extends Controller
             }
         }
 
-        // Convertir el texto de la respuesta del bot a audio usando la API de ElevenLabs
-        $api_key = "sk_cf430a6e35b4f537a3a6324805bb8255bbe18a10d16bbfb1"; // Coloca tu API key en .env
-        $voice_id = 'JBFqnCBsd6RMkjVDRZzb'; // ID de la voz
+
+        $api_key = "sk_084c7e15bc4c6a8c8ae7fdaeeb7214b86368453e5f746071";
+        $voice_id = 'XrExE9yKIg1WjnnlVkGX';
         $url = "https://api.elevenlabs.io/v1/text-to-speech/{$voice_id}";
 
         $audioResponse = Http::withHeaders([
@@ -50,19 +50,20 @@ class BotController extends Controller
             'xi-api-key' => $api_key
         ])->withOptions(['verify' => false])->post($url, [
             'text' => $botMessageText,
+             'model_id' =>"eleven_multilingual_v2",
             'voice_settings' => [
-                'stability' => 0.5,
-                'similarity_boost' => 0.5
+                'stability' => 0.9,
+                'similarity_boost' => 0.9
             ]
         ]);
 
         if ($audioResponse->successful()) {
-            // Guardar el archivo de audio en la carpeta public/audio
+
             $audioFile = 'audio/output_audio_' . time() . '.mp3';
             $saveSuccess = file_put_contents(public_path($audioFile), $audioResponse->body());
 
             if ($saveSuccess !== false && file_exists(public_path($audioFile))) {
-                // Retornar el texto formateado y la URL del audio
+
                 return response()->json([
                     'response' => $formattedResponse,
                     'audioUrl' => asset($audioFile)

@@ -46,12 +46,9 @@ Route::middleware([
 
 
 
-    Route::get('/convert-text', function () {
-        return view('convert_text');
-    });
 
-    Route::post('/convert-text-to-audio', [TextToSpeechController::class, 'convertTextToAudio'])
-        ->name('convert.text.to.audio');
+
+
 });
 
 
