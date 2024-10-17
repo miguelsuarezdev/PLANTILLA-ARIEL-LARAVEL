@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -14,23 +15,20 @@ class BotController extends Controller
 
     public function sendMessage(Request $request)
     {
-
         $userMessage = $request->input('message');
         Log::info("Usuario envió el mensaje: " . $userMessage);
 
         try {
-
             $response = Http::post('http://localhost:3000/send', [
                 'message' => $userMessage,
             ]);
-
 
             Log::info("Respuesta del bot: " . $response->body());
 
             $responseData = $response->json();
             $botMessageText = $responseData['response']['text'] ?? 'Error in response';
 
-
+            // Formatear la respuesta del bot con títulos
             $titles = ['Presenciales', 'Virtuales', 'Entrenamiento Especializado', 'Organismos Internacionales', 'Educativos'];
             $formattedResponse = '';
 
@@ -43,8 +41,8 @@ class BotController extends Controller
                 }
             }
 
-          
-            $api_key = "sk_084c7e15bc4c6a8c8ae7fdaeeb7214b86368453e5f746071";
+            // Conversión de texto a audio
+            $api_key = "sk_b1d1ca0e6a6af897db505b22148aca6667e2b5bb0a374eae";
             $voice_id = 'XrExE9yKIg1WjnnlVkGX';
             $url = "https://api.elevenlabs.io/v1/text-to-speech/{$voice_id}";
 
@@ -60,6 +58,7 @@ class BotController extends Controller
                 ]
             ]);
 
+            // Manejar la respuesta del audio
             if ($audioResponse->successful()) {
                 $audioFile = 'audio/output_audio_' . time() . '.mp3';
                 $saveSuccess = file_put_contents(public_path($audioFile), $audioResponse->body());
@@ -72,14 +71,22 @@ class BotController extends Controller
                     ]);
                 } else {
                     Log::error("Error al guardar el archivo de audio.");
-                    return response()->json(['error' => 'No se pudo guardar el archivo de audio.']);
+                    // Devolver solo la respuesta de texto si el audio falla
+                    return response()->json([
+                        'response' => $formattedResponse,
+                        'audioUrl' => null
+                    ]);
                 }
             } else {
                 Log::error("Error al convertir el texto a audio: " . $audioResponse->body());
-                return response()->json(['error' => 'Error al convertir el texto a audio: ' . $audioResponse->body()]);
+                // Devolver solo la respuesta de texto si el audio falla
+                return response()->json([
+                    'response' => $formattedResponse,
+                    'audioUrl' => null
+                ]);
             }
         } catch (\Exception $e) {
-            // Registrar cualquier excepción que ocurra durante la ejecución
+            // Registrar cualquier excepción
             Log::error("Error durante la ejecución: " . $e->getMessage());
             return response()->json(['error' => 'Ocurrió un error: ' . $e->getMessage()]);
         }

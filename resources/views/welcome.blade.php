@@ -13,7 +13,7 @@
         <nav class="relative flex items-center justify-between px-4 py-4 bg-white">
 
 
-            <a href="javascript:void(0)"><img src="{{ asset('storage/imagenes/logo.svg') }}" alt="logo"
+            <a href="javascript:void(0)"><img src="https://app.proderi.com/img/Logo%20Alena%20-%201.svg" alt="logo"
                     class='w-40 ml-7 max-lg:mr-5' />
             </a>
 
@@ -71,7 +71,7 @@
                 class="fixed top-0 bottom-0 left-0 flex flex-col w-5/6 max-w-sm px-6 py-6 overflow-y-auto bg-white border-r">
                 <div class="flex items-center mb-8">
                     <a class="mr-auto text-3xl font-bold leading-none" href="#">
-                        <a href="javascript:void(0)"><img src="{{ asset('storage/imagenes/logo.svg') }}" alt="logo"
+                        <a href="javascript:void(0)"><img src="https://app.proderi.com/img/Logo%20Alena%20-%201.svg" alt="logo"
                             class='w-40 ml-7 max-lg:mr-5' />
                     </a>
                     </a>
