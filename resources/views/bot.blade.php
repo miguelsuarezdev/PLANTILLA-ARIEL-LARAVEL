@@ -35,7 +35,11 @@
 <!-- https://github.com/neurolinker/popice -->
 
 <body class = "body bg-white dark:bg-[#0F172A]">
-    <nav class="fixed top-0 left-0 right-0 flex items-center justify-between px-4 bg-white z-50">
+    <nav class="relative flex items-center justify-between px-4 bg-white">
+
+
+
+
         <div class="lg:hidden">
             <button class="flex items-center p-3 text-blue-600 navbar-burger">
                 <svg class="block w-4 h-4 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -44,6 +48,12 @@
                 </svg>
             </button>
         </div>
+
+
+
+
+
+
     </nav>
 
     <div class="relative z-50 hidden navbar-menu">
@@ -52,9 +62,9 @@
             class="fixed top-0 bottom-0 left-0 flex flex-col w-5/6 max-w-sm px-6 py-6 overflow-y-auto bg-white border-r">
             <div class="flex items-center mb-8">
                 <a class="mr-auto text-3xl font-bold leading-none" href="#">
-                    <a href="javascript:void(0)"><img src="https://app.proderi.com/img/Logo%20Alena%20-%201.svg"
-                            alt="logo" class='w-40 ml-7 max-lg:mr-5' />
-                    </a>
+                    <a href="javascript:void(0)"><img src="https://app.proderi.com/img/Logo%20Alena%20-%201.svg" alt="logo"
+                        class='w-40 ml-7 max-lg:mr-5' />
+                </a>
                 </a>
                 <button class="navbar-close">
                     <svg class="w-6 h-6 text-gray-400 cursor-pointer hover:text-gray-500"
@@ -64,52 +74,41 @@
                     </svg>
                 </button>
             </div>
-
-            <div
-                class="hover:ml-4 w-full text-white hover:text-purple-500 dark:hover:text-blue-500 bg-[#1E293B] p-2 pl-8 transform ease-in-out duration-300 flex flex-row items-center space-x-3 mb-2">
-                <svg aria-hidden="true" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                </svg>
-                <div>Consultas</div>
-            </div>
-
-            {{-- Transcripciones --}}
-            <div
-                class="hover:ml-4 w-full text-white hover:text-purple-500 dark:hover:text-blue-500 bg-[#1E293B] p-2 pl-8 transform ease-in-out duration-300 flex flex-row items-center space-x-3">
-                <svg aria-hidden="true" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
-                </svg>
-                <div>Transcripciones</div>
+            <div>
+                <ul>
+                    <li class="mb-1">
+                        <a class="block p-4 text-sm font-semibold text-gray-400 rounded hover:bg-blue-50 hover:text-blue-600"
+                            href="#">Home</a>
+                    </li>
+                    <li class="mb-1">
+                        <a class="block p-4 text-sm font-semibold text-gray-400 rounded hover:bg-blue-50 hover:text-blue-600"
+                            href="#">Precios </a>
+                    </li>
+                    <li class="mb-1">
+                        <a class="block p-4 text-sm font-semibold text-gray-400 rounded hover:bg-blue-50 hover:text-blue-600"
+                            href="#">Nosotros</a>
+                    </li>
+                    <li class="mb-1">
+                        <a class="block p-4 text-sm font-semibold text-gray-400 rounded hover:bg-blue-50 hover:text-blue-600"
+                            href="#">Servicios</a>
+                    </li>
+                    <li class="mb-1">
+                        <a class="block p-4 text-sm font-semibold text-gray-400 rounded hover:bg-blue-50 hover:text-blue-600"
+                            href="#">Contacto</a>
+                    </li>
+                </ul>
             </div>
             <div class="mt-auto">
-                <div class="pt-6 text-center">
-                    <div class="flex items-center justify-start mb-4">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Usuario"
-                            class="w-10 h-10 mr-3 rounded-full">
-                        <div>
-                            <p class="font-medium text-gray-700">{{ Auth::user()->name }}</p>
-                            <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Formulario de cierre de sesión -->
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit"
-                            class="block w-full px-4 py-3 mb-2 text-xs font-semibold leading-loose text-center text-white bg-blue-600 hover:bg-blue-700 rounded-xl">
-                            Cerrar Sesión
-                        </button>
-                    </form>
+                <div class="pt-6">
+                    <a class="block px-4 py-3 mb-3 text-xs font-semibold leading-loose text-center bg-gray-50 hover:bg-gray-100 rounded-xl"
+                        href="{{ url('login')  }}">Iniciar sesion</a>
+                    <a class="block px-4 py-3 mb-2 text-xs font-semibold leading-loose text-center text-white bg-blue-600 hover:bg-blue-700 rounded-xl"
+                        href="{{url('register')}}">Registrarse</a>
                 </div>
                 <p class="my-4 text-xs text-center text-gray-400">
                     <span>Copyright © 2024</span>
                 </p>
             </div>
-
-
         </nav>
     </div>
 
@@ -158,8 +157,7 @@
     </script>
 
 
-    <aside
-        class="hidden lg:flex fixed z-50 h-screen transition duration-1000 ease-in-out transform -translate-x-48 w-60 bg-slate-100">
+    <aside class="hidden lg:flex fixed z-50 h-screen transition duration-1000 ease-in-out transform -translate-x-48 w-60 bg-slate-100">
 
         <!-- open sidebar button -->
         <div
@@ -206,19 +204,18 @@
                 class="hover:ml-4 w-full text-white hover:text-purple-500 dark:hover:text-blue-500 bg-[#1E293B] p-2 pl-8 transform ease-in-out duration-300 flex flex-row items-center space-x-3">
                 <svg aria-hidden="true" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 6h16M4 12h16M4 18h7" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
                 </svg>
                 <div>Transcripciones</div>
             </div>
             <!-- Prueba gratis -->
             {{-- <div class="absolute left-0 w-full px-6 bottom-24">
-    <div class="p-4 bg-white rounded-lg shadow">
-        <p class="text-sm text-gray-500">El tiempo de acceso gratis terminará dentro de 3 días.</p>
-        <button class="w-full px-4 py-2 mt-4 text-white bg-blue-500 rounded-md">Ver planes</button>
+            <div class="p-4 bg-white rounded-lg shadow">
+                <p class="text-sm text-gray-500">El tiempo de acceso gratis terminará dentro de 3 días.</p>
+                <button class="w-full px-4 py-2 mt-4 text-white bg-blue-500 rounded-md">Ver planes</button>
 
-    </div>
-    </div> --}}
+            </div>
+            </div> --}}
             <!-- Perfil de usuario -->
             <div class="absolute w-full px-6 bottom-4">
                 <div class="flex items-center">
@@ -250,8 +247,7 @@
                 class="hover:ml-4 justify-end pr-5 text-white hover:text-purple-500 dark:hover:text-blue-500 w-full bg-[#1E293B] p-3  transform ease-in-out duration-300 flex">
                 <svg aria-hidden="true" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 6h16M4 12h16M4 18h7" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
                 </svg>
             </div>
             <div
@@ -273,8 +269,7 @@
 
 
 
-    <div
-        class="flex flex-col items-center justify-start min-h-screen overflow-hidden bg-white shadow-2xl content logo">
+    <div class="flex flex-col items-center justify-start min-h-screen overflow-hidden bg-white shadow-2xl content logo">
         <!-- Contenedor principal que ocupa todo el espacio -->
         <div class="flex flex-col items-center flex-grow w-full h-full overflow-y-auto" id="mainContainer">
             <div class="w-full max-w-4xl mt-24 text-center" id="chatContent">
@@ -282,18 +277,19 @@
                     <img src="https://app.proderi.com/img/Logo%20Alena%20-%201.svg" alt="Imagen Ariel"
                         class="w-40 mx-auto mb-4">
                     <h1 class="text-2xl font-bold text-gray-800">Alena - Asistente Legal</h1>
-                    <p class="mt-2 text-base text-gray-600">Te ayudare en temas relacionados con GAFILAFT, estare aqui
-                        para ayudarte.</p>
+                    <p class="mt-2 text-base text-gray-600">Analiza miles de normas, jurisprudencia y doctrina legal
+                        especializada. No te limites a hacer preguntas, formula casos y pide que analice situaciones de
+                        la vida real.</p>
                 </div>
 
-                <!-- <div id="preguntas" class="flex flex-col mt-4 space-y-2">
+                <div id="preguntas" class="flex flex-col mt-4 space-y-2">
                     <button class="px-2 py-1 text-black border border-cyan-500 rounded-3xl">¿Qué diferencia a Alena de
                         otros chatbots inteligentes?</button>
                     <button class="px-2 py-1 text-black border border-cyan-500 rounded-3xl">¿Cómo puedo empezar a usar
                         Alena?</button>
                     <button class="px-2 py-1 text-black border border-cyan-500 rounded-3xl">¿En qué áreas del derecho
                         puede asistirme Alena?</button>
-                </div> -->
+                </div>
             </div>
 
             <div class="flex-grow w-full max-w-4xl pt-20 overflow-y-auto pb-36" id="conversationContainer"
@@ -371,7 +367,7 @@
                 chatTextarea.addEventListener('input', function() {
                     this.style.height = 'auto';
                     this.style.height = Math.min(this.scrollHeight, 128) +
-                        'px'; // Ajustar dinámicamente la altura
+                    'px'; // Ajustar dinámicamente la altura
                 });
 
                 const simpleBarInstance = new SimpleBar(conversationContainer);
@@ -420,7 +416,7 @@
                         botResponseElement.innerHTML += nextChar;
                         scrollToBottom();
 
-                        setTimeout(simulateTyping, 19); // Velocidad de escritura
+                        setTimeout(simulateTyping, 50); // Velocidad de escritura
                     } else {
                         isBotResponding = false; // Habilitar la entrada de mensajes cuando el bot termina de responder
                         enableUserInput();
@@ -538,7 +534,7 @@
                                 botAudio.play();
                             } else {
                                 // Si no hay audio, simular el audio
-                                // simulateAudio();
+                                simulateAudio();
                             }
 
                             scrollToBottom(); // Asegurarse de hacer scroll al final
