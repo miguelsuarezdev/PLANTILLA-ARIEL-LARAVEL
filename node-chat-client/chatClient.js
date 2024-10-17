@@ -10,7 +10,7 @@ app.post('/send', async (req, res) => {
 
   const webhookId = 'ca97e80a-1910-45fb-8819-ac44fb79fb3b';
 
-  
+
   const apiUrl = `https://chat.botpress.cloud/${webhookId}`;
 
   try {
@@ -26,7 +26,7 @@ app.post('/send', async (req, res) => {
 
     // Función para intentar obtener la respuesta del bot con reintentos
     const MAX_RETRIES = 5; // Número máximo de reintentos
-    const DELAY_BETWEEN_RETRIES = 1000; // Tiempo entre reintentos en milisegundos
+    const DELAY_BETWEEN_RETRIES = 2000; // Tiempo entre reintentos en milisegundos
 
     async function waitForBotResponse(client, conversationId, retries = 0) {
       if (retries >= MAX_RETRIES) {
