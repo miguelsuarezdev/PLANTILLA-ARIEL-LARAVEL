@@ -10,15 +10,10 @@ set_time_limit(60);
 
 class BotController extends Controller
 {
-    public function showChatForm()
-    {
-        return view('bot');
-    }
-
     public function sendMessage(Request $request)
     {
         $userMessage = $request->input('message');
-        $processAudio = $request->input('processAudio') === 'true'; // Capturar si debe procesar el audio
+        $processAudio = $request->input('processAudio') === 'true';
 
         Log::info("Usuario envió el mensaje: " . $userMessage);
         Log::info("Procesar audio: " . ($processAudio ? 'Sí' : 'No'));
@@ -32,21 +27,14 @@ class BotController extends Controller
             Log::info("Respuesta del bot: " . $response->body());
 
             $responseData = $response->json();
-            $botMessageText = $responseData['response']['text'] ?? 'No encontré una respuesta relacionada a tu pregunta, por favor reformúlala.';
+            Log::info("Respuesta completa del bot: " . json_encode($responseData));
 
-            // Formatear la respuesta del bot con títulos
-            $titles = ['Presenciales', 'Virtuales', 'Entrenamiento Especializado', 'Organismos Internacionales', 'Educativos'];
-            $formattedResponse = '';
+            // Ajuste: Procesar correctamente el array de respuestas del bot
+            $botMessages = isset($responseData['response']) && is_array($responseData['response'])
+                ? $responseData['response'] // Array de respuestas del bot
+                : ['No encontré una respuesta relacionada a tu pregunta, por favor reformúlala.'];
 
-            foreach (explode("\n", $botMessageText) as $line) {
-                $trimmedLine = trim($line);
-                if (in_array($trimmedLine, $titles)) {
-                    $formattedResponse .= '<strong>' . $trimmedLine . ':</strong><br>';
-                } else {
-                    $formattedResponse .= $trimmedLine . '<br>';
-                }
-            }
-
+            // Procesar la conversión de texto a audio si está habilitado
             if ($processAudio && config('app.activeaudio') == 'true') {
                 // Conversión de texto a audio usando Eleven Labs API
                 $api_key = config('app.eleventlab');
@@ -57,7 +45,7 @@ class BotController extends Controller
                     'Content-Type' => 'application/json',
                     'xi-api-key' => $api_key
                 ])->withOptions(['verify' => false])->post($url, [
-                    'text' => $botMessageText,
+                    'text' => implode(' ', $botMessages),
                     'model_id' => "eleven_multilingual_v2",
                     'voice_settings' => [
                         'stability' => 0.9,
@@ -67,33 +55,32 @@ class BotController extends Controller
 
                 // Verificar si la conversión de texto a audio fue exitosa
                 if ($audioResponse->successful()) {
-                    // Generar el nombre del archivo de audio
                     $audioFile = 'audio/output_audio_' . time() . '.mp3';
                     $saveSuccess = file_put_contents(public_path($audioFile), $audioResponse->body());
 
                     if ($saveSuccess !== false && file_exists(public_path($audioFile))) {
                         Log::info("Archivo de audio guardado en: " . public_path($audioFile));
                         return response()->json([
-                            'response' => $formattedResponse,
-                            'audioUrl' => asset($audioFile) // Retornar la URL del archivo de audio
+                            'response' => $botMessages,
+                            'audioUrl' => asset($audioFile)
                         ]);
                     } else {
                         Log::error("Error al guardar el archivo de audio.");
                         return response()->json([
-                            'response' => $formattedResponse,
+                            'response' => $botMessages,
                             'audioUrl' => null
                         ]);
                     }
                 } else {
                     Log::error("Error al convertir el texto a audio: " . $audioResponse->body());
                     return response()->json([
-                        'response' => $formattedResponse,
+                        'response' => $botMessages,
                         'audioUrl' => null
                     ]);
                 }
             } else {
                 return response()->json([
-                    'response' => $formattedResponse,
+                    'response' => $botMessages,
                     'audioUrl' => null
                 ]);
             }

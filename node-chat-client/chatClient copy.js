@@ -8,16 +8,13 @@ app.use(express.json());
 app.post("/send", async (req, res) => {
     const messageText = req.body.message;
 
-    // Webhook del bot
     const webhookId = "4d6c0ee0-3443-4965-934a-ea6b93cb6423";
     const apiUrl = `https://chat.botpress.cloud/${webhookId}`;
 
     try {
-        // Conectarse al cliente del botpress
         const client = await chat.Client.connect({ apiUrl });
         const { conversation } = await client.createConversation({});
 
-        // Enviar el mensaje del usuario al bot
         await client.createMessage({
             conversationId: conversation.id,
             payload: {
@@ -26,45 +23,40 @@ app.post("/send", async (req, res) => {
             },
         });
 
-        // Parámetros de reintentos para recibir múltiples mensajes
-        const MAX_RETRIES = 5; // Número máximo de intentos para recolectar mensajes
-        const DELAY_BETWEEN_RETRIES = 20000; // Tiempo de espera entre intentos (en milisegundos)
+        const MAX_RETRIES = 5; // Aumentar el número de reintentos
+        const DELAY_BETWEEN_RETRIES = 3000; // Aumentar el tiempo de espera entre cada intento a 3 segundos
 
-        // Función para esperar las respuestas del bot
         async function waitForBotResponses(
             client,
             conversationId,
             retries = 0
         ) {
             if (retries >= MAX_RETRIES) {
-                throw new Error(
-                    "No se recibió respuesta del bot después de varios intentos."
-                );
+                throw new Error("No response from bot after multiple retries.");
             }
 
-            // Obtener todos los mensajes de la conversación
             const { messages } = await client.listConversationMessages({
                 id: conversationId,
             });
 
-            // Filtrar solo los mensajes enviados por el bot (excluyendo los del usuario)
+            // Filtra los mensajes que provienen del bot
             const botMessages = messages.filter(
                 (message) => message.userId !== client.user.id
             );
 
-            // Mostrar en consola los mensajes recolectados para depuración
+            // Agregar console.log aquí para ver qué mensajes se han recolectado hasta ahora
             console.log(
                 "Mensajes recolectados hasta ahora: ",
                 botMessages.map((msg) => msg.payload.text)
             );
 
-            // Si se han recibido más de un mensaje del bot, regresarlos
-            if (botMessages.length > 0) {
-                console.log("Mensajes finales del bot: ", botMessages);
-                return botMessages.map((msg) => msg.payload.text); // Regresar los textos de los mensajes
+            // Solo continúa si tenemos más de un mensaje
+            if (botMessages.length > 1) {
+                console.log("Mensajes del bot recolectados: ", botMessages);
+                return botMessages.map((msg) => msg.payload.text); // Devuelve los textos de los mensajes
             }
 
-            // Si no se han recibido respuestas, esperar y reintentar
+            // Espera y reintenta si no se han recibido todos los mensajes esperados
             await new Promise((resolve) =>
                 setTimeout(resolve, DELAY_BETWEEN_RETRIES)
             );
@@ -74,19 +66,17 @@ app.post("/send", async (req, res) => {
         // Intentar obtener las respuestas del bot
         const botResponses = await waitForBotResponses(client, conversation.id);
 
-        // Enviar las respuestas del bot al cliente Laravel
+        // Enviar las respuestas al cliente Laravel
         if (botResponses.length > 0) {
             res.json({ response: botResponses });
         } else {
             res.json({ response: ["No response from bot."] });
         }
     } catch (error) {
-        // Manejo de errores
         res.status(500).json({ error: error.message });
     }
 });
 
-// Iniciar el servidor Node.js en el puerto 3000
 app.listen(port, () => {
-    console.log(`Servidor Node.js escuchando en http://localhost:${port}`);
+    console.log(`Node.js server listening at http://localhost:${port}`);
 });
