@@ -24,7 +24,7 @@
         <!-- Sección de formulario -->
         <div class="flex items-center justify-center p-8 bg-white shadow-lg lg:w-1/2 lg:h-full rounded-2xl lg:m-3">
             <div class="w-full max-w-xl p-8 bg-transparent rounded-xl">
-                <img src="{{ asset('storage/imagenes/logo.svg') }}" alt="Logo Ariel" class="mt-2 w-44">
+                <img src="https://app.proderi.com/img/Logo%20Alena%20-%201.svg" alt="Logo " class="mt-2 w-44">
                 <h3 class="mb-2 text-2xl font-semibold">Crear cuenta</h3>
                 <p class="mb-4 text-gray-600">Con tu cuenta podrás acceder a Ariel y todas sus funcionalidades.</p>
 
@@ -33,16 +33,16 @@
 
                     <!-- Mostrar mensajes de error globales -->
                     @if ($errors->any())
-                    <div class="mb-4">
-                        <div class="font-medium text-red-600">
-                            {{ __('Whoops! Something went wrong.') }}
+                        <div class="mb-4">
+                            <div class="font-medium text-red-600">
+                                {{ __('Whoops! Something went wrong.') }}
+                            </div>
+                            <ul class="mt-3 text-sm text-red-600 list-disc list-inside">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
-                        <ul class="mt-3 text-sm text-red-600 list-disc list-inside">
-                            @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
                     @endif
 
                     <div class="relative mb-4">
@@ -50,7 +50,7 @@
                             class="w-full px-4 py-2 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             required />
                         @error('name')
-                        <span class="text-sm text-red-600">{{ $message }}</span>
+                            <span class="text-sm text-red-600">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -59,7 +59,7 @@
                             class="w-full px-4 py-2 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             required />
                         @error('email')
-                        <span class="text-sm text-red-600">{{ $message }}</span>
+                            <span class="text-sm text-red-600">{{ $message }}</span>
                         @enderror
                         <div class="absolute inset-y-0 flex items-center pointer-events-none right-3">
                             <!-- Icono de email -->
@@ -71,7 +71,7 @@
                             class="w-full px-4 py-2 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             required />
                         @error('password')
-                        <span class="text-sm text-red-600">{{ $message }}</span>
+                            <span class="text-sm text-red-600">{{ $message }}</span>
                         @enderror
                         <div class="absolute inset-y-0 flex items-center pointer-events-none right-3">
                             <!-- Icono de contraseña -->
@@ -84,7 +84,7 @@
                             class="w-full px-4 py-2 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             required />
                         @error('password_confirmation')
-                        <span class="text-sm text-red-600">{{ $message }}</span>
+                            <span class="text-sm text-red-600">{{ $message }}</span>
                         @enderror
                         <div class="absolute inset-y-0 flex items-center pointer-events-none right-3">
                             <!-- Icono de confirmación de contraseña -->

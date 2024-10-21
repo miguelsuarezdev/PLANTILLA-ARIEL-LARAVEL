@@ -273,7 +273,8 @@
 
 
 
-    <div class="flex flex-col items-center justify-start min-h-screen overflow-hidden bg-white shadow-2xl content logo">
+    <div
+        class="flex flex-col items-center justify-start min-h-screen overflow-hidden bg-white shadow-2xl content logo">
         <!-- Contenedor principal que ocupa todo el espacio -->
         <div class="flex flex-col items-center flex-grow w-full h-full overflow-y-auto" id="mainContainer">
             <div class="w-full max-w-4xl mt-24 text-center" id="chatContent">
@@ -293,324 +294,376 @@
                     <!-- Aquí se mostrarán los mensajes de la conversación -->
                 </div>
 
-                <!-- Contenedor para el audio -->
-                <audio id="botAudio" controls style="display: none;"></audio>
+                <style>
+                    /* Oculta la barra de desplazamiento pero mantiene el scroll funcional */
+                    .no-scrollbar::-webkit-scrollbar {
+                        display: none;
+                        /* Oculta la barra en navegadores basados en WebKit (Chrome, Safari, etc.) */
+                    }
+
+                    .no-scrollbar {
+                        -ms-overflow-style: none;
+                        /* Oculta la barra en Internet Explorer y Edge */
+                        scrollbar-width: none;
+                        /* Oculta la barra en Firefox */
+                    }
+
+                    /* Ajustes adicionales para mejorar la experiencia de scroll */
+                    #conversation {
+                        -webkit-overflow-scrolling: touch;
+                        /* Mejora el scroll en dispositivos móviles */
+                    }
+                </style>
             </div>
 
-            <style>
-                /* Oculta la barra de desplazamiento pero mantiene el scroll funcional */
-                .no-scrollbar::-webkit-scrollbar {
-                    display: none;
-                    /* Oculta la barra en navegadores basados en WebKit (Chrome, Safari, etc.) */
-                }
+            <!-- Caja de entrada de mensajes estilizada -->
+            <div class="fixed bottom-0 w-full max-w-full px-2 mx-auto mb-4 sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-4xl"
+                id="chatBox">
+                <form id="chatForm">
+                    <label for="chat" class="sr-only">Escribe tu mensaje aquí...</label>
+                    <div class="flex items-center px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
+                        <textarea id="chat" rows="1"
+                            class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Escribe tu mensaje..."></textarea>
+                        <button type="submit"
+                            class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
+                            <svg class="w-5 h-5 rotate-90 rtl:-rotate-90" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+                                <path
+                                    d="m17.914 18.594-8-18a1 1 0 0 0-1.828 0l-8 18a1 1 0 0 0 1.157 1.376L8 18.281V9a1 1 0 0 1 2 0v9.281l6.758 1.689a1 1 0 0 0 1.156-1.376Z" />
+                            </svg>
+                            <span class="sr-only">Enviar mensaje</span>
+                        </button>
+                    </div>
+                    <div>
+                        <label for="audioCheckbox">
+                            <input type="checkbox" id="audioCheckbox" name="processAudio" value="true" checked>
+                            Procesar audio
+                        </label>
+                    </div>
+                </form>
+            </div>
 
-                .no-scrollbar {
-                    -ms-overflow-style: none;
-                    /* Oculta la barra en Internet Explorer y Edge */
-                    scrollbar-width: none;
-                    /* Oculta la barra en Firefox */
-                }
+            <!-- JavaScript para enviar mensajes y procesar la respuesta -->
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const chatForm = document.getElementById('chatForm');
+                    const chatTextarea = document.getElementById('chat');
+                    const conversation = document.getElementById('conversation');
+                    const audioCheckbox = document.getElementById('audioCheckbox');
+                    let fullResponse = '';
+                    let currentIndex = 0;
+                    let isBotResponding = false;
 
-                /* Ajustes adicionales para mejorar la experiencia de scroll */
-                #conversation {
-                    -webkit-overflow-scrolling: touch;
-                    /* Mejora el scroll en dispositivos móviles */
-                }
-            </style>
-        </div>
-
-        <!-- Caja de entrada de mensajes estilizada -->
-        <div
-            class="fixed bottom-0 w-full max-w-full px-2 mx-auto mb-4 sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-4xl"
-            id="chatBox">
-            <form id="chatForm">
-                <label for="chat" class="sr-only">Escribe tu mensaje aquí...</label>
-                <div class="flex items-center px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
-                    <textarea id="chat" rows="1"
-                        class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Escribe tu mensaje..."></textarea>
-                    <button type="submit"
-                        class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
-                        <svg class="w-5 h-5 rotate-90 rtl:-rotate-90" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
-                            <path
-                                d="m17.914 18.594-8-18a1 1 0 0 0-1.828 0l-8 18a1 1 0 0 0 1.157 1.376L8 18.281V9a1 1 0 0 1 2 0v9.281l6.758 1.689a1 1 0 0 0 1.156-1.376Z" />
-                        </svg>
-                        <span class="sr-only">Enviar mensaje</span>
-                    </button>
-                </div>
-                <div>
-                    <label for="audioCheckbox">
-                        <input type="checkbox" id="audioCheckbox" name="processAudio" value="true" checked>
-                        Procesar audio
-                    </label>
-                </div>
-            </form>
-        </div>
-
-        <audio id="botAudio" controls style="display: none;"></audio>
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                const chatForm = document.getElementById('chatForm');
-                const chatTextarea = document.getElementById('chat');
-                const conversation = document.getElementById('conversation');
-                const chatContent = document.getElementById('chatContent'); // Contenedor del contenido del chat
-                const conversationContainer = document.querySelector(
-                    '[data-simplebar]'); // Contenedor de la conversación
-                const botAudio = document.getElementById('botAudio');
-                const audioCheckbox = document.getElementById('audioCheckbox');
-                let botResponseElement;
-                let fullResponse = '';
-                let currentIndex = 0;
-                let isBotResponding = false;
-
-                // Ajustar el tamaño del textarea al escribir
-                chatTextarea.addEventListener('input', function() {
-                    this.style.height = 'auto';
-                    this.style.height = Math.min(this.scrollHeight, 128) +
-                        'px'; // Ajustar dinámicamente la altura
-                });
-
-                function scrollToBottom() {
-                    const conversationContainer = document.getElementById('conversation');
-                    conversationContainer.scrollTop = conversationContainer.scrollHeight;
-                }
-
-                function formatBotResponse(response) {
-                    const lines = response.split('\n');
-                    let formattedResponse = '';
-
-                    lines.forEach(line => {
-                        if (line.match(/^\d+\./)) {
-                            formattedResponse += `<li>${line.substring(line.indexOf(' ') + 1).trim()}</li>`;
-                        } else if (line.startsWith('Preguntas de seguimiento:')) {
-                            formattedResponse += `<h4 class="mt-4 font-bold">${line.trim()}</h4>`;
-                        } else {
-                            formattedResponse += `<p>${line.trim()}</p>`;
-                        }
-                    });
-
-                    if (formattedResponse.includes('<li>')) {
-                        formattedResponse = `<ol class="ml-6 list-decimal">${formattedResponse}</ol>`;
+                    function scrollToBottom() {
+                        conversation.scrollTop = conversation.scrollHeight;
                     }
 
-                    return formattedResponse;
-                }
-
-                function simulateTyping() {
-                    if (currentIndex < fullResponse.length) {
-                        let nextChar = fullResponse.charAt(currentIndex);
-
-                        if (nextChar === '<') {
-                            const tagEnd = fullResponse.indexOf('>', currentIndex) + 1;
-                            nextChar = fullResponse.substring(currentIndex, tagEnd);
-                            currentIndex = tagEnd;
-                        } else {
-                            currentIndex++;
-                        }
-
-                        // Agregar el siguiente carácter al elemento de respuesta del bot
-                        botResponseElement.querySelector('.bot-response').innerHTML += nextChar;
-                        scrollToBottom();
-
-                        setTimeout(simulateTyping, 19); // Velocidad de escritura
-                    } else {
-                        isBotResponding = false; // Habilitar la entrada de mensajes cuando el bot termina de responder
-                        enableUserInput();
+                    function disableUserInput() {
+                        chatTextarea.disabled = true;
                     }
-                }
 
-                function disableUserInput() {
-                    chatTextarea.disabled = true;
-                }
+                    function enableUserInput() {
+                        chatTextarea.disabled = false;
+                    }
 
-                function enableUserInput() {
-                    chatTextarea.disabled = false;
-                }
+                    function formatBotResponse(response) {
+                        return `<p>${response}</p>`;
+                    }
 
-                function sendMessage() {
-                    if (isBotResponding) return; // No permitir el envío si el bot está respondiendo
+                    function simulateTyping() {
+                        if (currentIndex < fullResponse.length) {
+                            let nextChar = fullResponse.charAt(currentIndex);
 
-                    const userMessage = chatTextarea.value.trim();
-                    const processAudio = audioCheckbox.checked ? 'true' : 'false'; // Enviar el estado del checkbox
+                            if (nextChar === '<') {
+                                const tagEnd = fullResponse.indexOf('>', currentIndex) + 1;
+                                nextChar = fullResponse.substring(currentIndex, tagEnd);
+                                currentIndex = tagEnd;
+                            } else {
+                                currentIndex++;
+                            }
 
-                    if (!userMessage) return;
+                            botResponseElement.querySelector('.bot-response').innerHTML += nextChar;
+                            scrollToBottom();
 
-                    chatTextarea.value = '';
-                    chatTextarea.style.height = 'auto';
+                            setTimeout(simulateTyping, 19);
+                        } else {
+                            isBotResponding = false;
+                            enableUserInput();
+                        }
+                    }
 
-                    // Ocultar el contenido del chat y mostrar la conversación al enviar el mensaje
-                    chatContent.style.display = 'none'; // Ocultar el contenido del chat
-                    conversationContainer.style.display = 'block'; // Mostrar la conversación
+                    function sendMessage() {
+                        if (isBotResponding) return;
 
-                    // Mensaje del usuario en la derecha
-                    conversation.innerHTML += `
+                        const userMessage = chatTextarea.value.trim();
+                        const processAudio = audioCheckbox.checked ? 'true' : 'false';
+
+                        if (!userMessage) return;
+
+                        chatTextarea.value = '';
+                        chatTextarea.style.height = 'auto';
+
+                        chatContent.style.display = 'none';
+                        conversationContainer.style.display = 'block';
+
+                        conversation.innerHTML += `
                     <div class="flex justify-end my-2">
                         <div class="w-auto max-w-xs p-3 text-white bg-blue-500 rounded-lg">
                             ${userMessage}
                         </div>
                     </div>`;
 
-                        // Añadir el mensaje temporal "El bot está escribiendo..."
+                        chatTextarea.value = '';
+                        scrollToBottom();
+
                         botResponseElement = document.createElement('div');
                         botResponseElement.classList.add('bot-message');
                         botResponseElement.innerHTML = `
                         <div class="flex justify-start my-2">
                             <div class="w-auto max-w-xl p-3 text-black bg-gray-300 rounded-lg bot-response">
-                                <span>El bot está escribiendo...</span> <!-- Texto temporal -->
+                                <span>El bot está escribiendo...</span>
                             </div>
-                        </div> `;
+                        </div>`;
+
                         conversation.appendChild(botResponseElement);
+                        scrollToBottom();
+                        disableUserInput();
+                        isBotResponding = true;
 
-                    scrollToBottom(); // Hacer scroll hacia abajo cuando se añade el mensaje
-
-                    // Deshabilitar la entrada mientras el bot responde
-                    disableUserInput();
-                    isBotResponding = true;
-
-                    fetch('/chat', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                message: userMessage,
-                                processAudio: processAudio // Incluir el valor del checkbox en la solicitud
+                        fetch('/chat', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({
+                                    message: userMessage,
+                                    processAudio: processAudio
+                                })
                             })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            fullResponse = formatBotResponse(data.response); // Formatear la respuesta del bot
+                            .then(response => response.json())
+                            .then(data => {
+                                fullResponse = formatBotResponse(data.response);
+                                botResponseElement.querySelector('.bot-response').innerHTML = '';
+                                currentIndex = 0;
+                                setTimeout(() => {
+                                    simulateTyping();
+                                }, 1000);
 
-                            // Eliminar el texto "El bot está escribiendo..."
-                            botResponseElement.querySelector('.bot-response').innerHTML = '';
+                                // Añadir reproductor de audio bajo el mensaje del bot si existe audio
+                                if (data.audioUrl) {
+                                    const audioElement = document.createElement('audio');
+                                    audioElement.controls = true;
+                                    audioElement.src = data.audioUrl;
+                                    botResponseElement.appendChild(audioElement);
+                                    audioElement.play();
+                                }
 
-                            // Simular la escritura de la respuesta del bot
-                            currentIndex = 0; // Reiniciar el índice de caracteres
-                            setTimeout(() => {
-                                simulateTyping(); // Iniciar la simulación de escritura
-                            }, 1000); // Esperar 1 segundo antes de mostrar la respuesta
+                                scrollToBottom();
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                isBotResponding = false;
+                                enableUserInput();
+                            });
+                    }
 
-                            // Mostrar el audio si existe
-                            if (data.audioUrl) {
-                                botAudio.src = data.audioUrl;
-                                botAudio.style.display = 'block';
-                                botAudio.play();
-                            }
+                    chatTextarea.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            sendMessage();
+                        }
+                    });
 
-                            scrollToBottom(); // Hacer scroll hacia abajo cuando se añade la respuesta del bot
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            isBotResponding = false;
-                            enableUserInput(); // Volver a habilitar la entrada en caso de error
-                        });
-                }
-
-                // Enviar mensaje al presionar Enter
-                chatTextarea.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter' && !e.shiftKey) {
+                    chatForm.addEventListener('submit', function(e) {
                         e.preventDefault();
                         sendMessage();
+                    });
+                });
+            </script>
+        </div>
+
+
+
+
+
+
+
+        <script>
+            const sidebar = document.querySelector("aside");
+            const maxSidebar = document.querySelector(".max")
+            const miniSidebar = document.querySelector(".mini")
+            const roundout = document.querySelector(".roundout")
+            const maxToolbar = document.querySelector(".max-toolbar")
+            const logo = document.querySelector('.logo')
+            const content = document.querySelector('.content')
+            const moon = document.querySelector(".moon")
+            const sun = document.querySelector(".sun")
+
+            function setDark(val) {
+                if (val === "dark") {
+                    document.documentElement.classList.add('dark')
+                    moon.classList.add("hidden")
+                    sun.classList.remove("hidden")
+                } else {
+                    document.documentElement.classList.remove('dark')
+                    sun.classList.add("hidden")
+                    moon.classList.remove("hidden")
+                }
+            }
+
+            function openNav() {
+                if (sidebar.classList.contains('-translate-x-48')) {
+                    // max sidebar
+                    sidebar.classList.remove("-translate-x-48")
+                    sidebar.classList.add("translate-x-none")
+                    maxSidebar.classList.remove("hidden")
+                    maxSidebar.classList.add("flex")
+                    miniSidebar.classList.remove("flex")
+                    miniSidebar.classList.add("hidden")
+                    maxToolbar.classList.add("translate-x-0")
+                    maxToolbar.classList.remove("translate-x-24", "scale-x-0")
+                    logo.classList.remove("ml-12")
+                    content.classList.remove("ml-12")
+                    content.classList.add("ml-12", "md:ml-60")
+                } else {
+                    // mini sidebar
+                    sidebar.classList.add("-translate-x-48")
+                    sidebar.classList.remove("translate-x-none")
+                    maxSidebar.classList.add("hidden")
+                    maxSidebar.classList.remove("flex")
+                    miniSidebar.classList.add("flex")
+                    miniSidebar.classList.remove("hidden")
+                    maxToolbar.classList.add("translate-x-24", "scale-x-0")
+                    maxToolbar.classList.remove("translate-x-0")
+                    logo.classList.add('ml-12')
+                    content.classList.remove("ml-12", "md:ml-60")
+                    content.classList.add("ml-12")
+
+                }
+
+            }
+        </script>
+
+</html>
+
+
+
+
+<!-- nuevo -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const chatForm = document.getElementById('chatForm');
+        const chatTextarea = document.getElementById('chat');
+        const conversation = document.getElementById('conversation');
+        const audioCheckbox = document.getElementById('audioCheckbox');
+        let isBotResponding = false;
+
+        function scrollToBottom() {
+            conversation.scrollTop = conversation.scrollHeight;
+        }
+
+        function disableUserInput() {
+            chatTextarea.disabled = true;
+        }
+
+        function enableUserInput() {
+            chatTextarea.disabled = false;
+        }
+
+        function formatBotResponse(response) {
+            return `<p>${response}</p>`;
+        }
+
+        function sendMessage() {
+            if (isBotResponding) return;
+
+            const userMessage = chatTextarea.value.trim();
+            const processAudio = audioCheckbox.checked ? 'true' : 'false';
+
+            if (!userMessage) return;
+
+            chatTextarea.value = '';
+            chatTextarea.style.height = 'auto';
+
+            conversation.innerHTML += `
+                <div class="flex justify-end my-2">
+                    <div class="w-auto max-w-xs p-3 text-white bg-blue-500 rounded-lg">
+                        ${userMessage}
+                    </div>
+                </div>`;
+
+            scrollToBottom();
+
+            disableUserInput();
+            isBotResponding = true;
+
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    message: userMessage,
+                    processAudio: processAudio
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let botMessages = data.response;
+
+                // Si solo es un mensaje de texto simple, convertirlo a array
+                if (typeof botMessages === 'string') {
+                    botMessages = [botMessages];
+                }
+
+                // Iterar sobre los mensajes recibidos
+                botMessages.forEach((message, index) => {
+                    let botResponseElement = document.createElement('div');
+                    botResponseElement.classList.add('bot-message');
+                    botResponseElement.innerHTML = `
+                        <div class="flex justify-start my-2">
+                            <div class="w-auto max-w-xl p-3 text-black bg-gray-300 rounded-lg bot-response">
+                                ${formatBotResponse(message)}
+                            </div>
+                        </div>`;
+
+                    conversation.appendChild(botResponseElement);
+
+                    // Si hay un archivo de audio, se añade al último mensaje
+                    if (index === botMessages.length - 1 && data.audioUrl) {
+                        const audioElement = document.createElement('audio');
+                        audioElement.controls = true;
+                        audioElement.src = data.audioUrl;
+                        botResponseElement.appendChild(audioElement);
+                        audioElement.play();
                     }
                 });
 
-                // Enviar mensaje al hacer clic en el botón de enviar
-                chatForm.addEventListener('submit', function(e) {
-                    e.preventDefault(); // Evitar que el formulario se recargue
-                    sendMessage();
-                });
+                scrollToBottom();
+                isBotResponding = false;
+                enableUserInput();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                isBotResponding = false;
+                enableUserInput();
             });
-        </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
-
-
-
-
-
-
-
-
-
-        <!-- JavaScript para cambiar el contenido dinámico -->
-    </div>
-
-
-
-
-
-    <script>
-        const sidebar = document.querySelector("aside");
-        const maxSidebar = document.querySelector(".max")
-        const miniSidebar = document.querySelector(".mini")
-        const roundout = document.querySelector(".roundout")
-        const maxToolbar = document.querySelector(".max-toolbar")
-        const logo = document.querySelector('.logo')
-        const content = document.querySelector('.content')
-        const moon = document.querySelector(".moon")
-        const sun = document.querySelector(".sun")
-
-        function setDark(val) {
-            if (val === "dark") {
-                document.documentElement.classList.add('dark')
-                moon.classList.add("hidden")
-                sun.classList.remove("hidden")
-            } else {
-                document.documentElement.classList.remove('dark')
-                sun.classList.add("hidden")
-                moon.classList.remove("hidden")
-            }
         }
 
-        function openNav() {
-            if (sidebar.classList.contains('-translate-x-48')) {
-                // max sidebar
-                sidebar.classList.remove("-translate-x-48")
-                sidebar.classList.add("translate-x-none")
-                maxSidebar.classList.remove("hidden")
-                maxSidebar.classList.add("flex")
-                miniSidebar.classList.remove("flex")
-                miniSidebar.classList.add("hidden")
-                maxToolbar.classList.add("translate-x-0")
-                maxToolbar.classList.remove("translate-x-24", "scale-x-0")
-                logo.classList.remove("ml-12")
-                content.classList.remove("ml-12")
-                content.classList.add("ml-12", "md:ml-60")
-            } else {
-                // mini sidebar
-                sidebar.classList.add("-translate-x-48")
-                sidebar.classList.remove("translate-x-none")
-                maxSidebar.classList.add("hidden")
-                maxSidebar.classList.remove("flex")
-                miniSidebar.classList.add("flex")
-                miniSidebar.classList.remove("hidden")
-                maxToolbar.classList.add("translate-x-24", "scale-x-0")
-                maxToolbar.classList.remove("translate-x-0")
-                logo.classList.add('ml-12')
-                content.classList.remove("ml-12", "md:ml-60")
-                content.classList.add("ml-12")
-
+        chatTextarea.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
             }
+        });
 
-        }
-    </script>
-
-</html>
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            sendMessage();
+        });
+    });
+</script>
